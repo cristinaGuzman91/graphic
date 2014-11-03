@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<!-- saved from url=(0062)file:///home/ccastillo/Desktop/bootstrap-3.1.1-dist/Vista.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="http://getbootstrap.com/assets/ico/favicon.ico">
+
+    <title>Narrow Jumbotron Template for Bootstrap</title>
+     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
+
+ 
+<script src="CargarInformacion.js"></script>
+    </head>
+
+  <body onload="onLoad()">
+
+    <div class="container">
+      <div class="header">
+        <ul class="nav nav-pills pull-right">
+          <li class="active"><a href="http://getbootstrap.com/examples/jumbotron-narrow/#">Home</a></li>
+          <li><a href="http://getbootstrap.com/examples/jumbotron-narrow/#">About</a></li>
+          <li><a href="http://getbootstrap.com/examples/jumbotron-narrow/#">Contact</a></li>
+        </ul>
+        <h3 class="text-muted">Project name</h3>
+      </div>
+
+      <div class="jumbotron">
+            <form role="form">
+  <div class="form-group">
+    <label for="exampleInputEmail1">SensorTag</label>
+    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter Name">
+  </div>
+  <div class="form-group">
+   <label for="exampleInputEmail1">Company</label>
+<select class="form-control" id="company"
+        onChange="loadXMLSensorCatalog()">
+</select>
+</div>
+
+<div class="form-group">
+   <label for="exampleInputEmail1">Sensor Type</label>
+<select class="form-control" id="sensorType">
+</select>
+</div><table class="table">
+      <thead>
+        <tr>
+          <th>Check</th>
+          <th>Model</th>
+          <th>Reference</th>
+          <th>Output Format</th>
+            <th>Output Type</th>
+
+        </tr>
+      </thead>
+      <tbody>
+  <tr class="active">
+     <td><input type="checkbox"></td>
+     <td>Column content</td>
+     <td>Column content</td>
+     <td>Column content</td>
+     <td>Column content</td>
+  </tr>
+  <tr class="active">
+     <td><input type="checkbox"></td>
+     <td>Column content</td>
+     <td>Column content</td>
+     <td>Column content</td>
+     <td>Column content</td>
+  </tr>
+  <tr class="active">
+     <td><input type="checkbox"></td>
+     <td>Column content</td>
+     <td>Column content</td>
+     <td>Column content</td>
+     <td>Column content</td>
+  </tr>
+  <tr class="active">
+     <td><input type="checkbox"></td>
+     <td>Column content</td>
+     <td>Column content</td>
+     <td>Column content</td>
+     <td>Column content</td>
+  </tr>
+  <tr class="active">
+     <td><input type="checkbox"></td>
+     <td>Column content</td>
+     <td>Column content</td>
+     <td>Column content</td>
+     <td>Column content</td>
+  </tr>
+  <tr class="active">
+     <td><input type="checkbox"></td>
+     <td>Column content</td>
+     <td>Column content</td>
+     <td>Column content</td>
+     <td>Column content</td>
+  </tr>
+  <tr class="active">
+     <td><input type="checkbox"></td>
+     <td>Column content</td>
+     <td>Column content</td>
+     <td>Column content</td>
+     <td>Column content</td>
+  </tr>
+</tbody><tbody>
+        <tr class="active">
+          <td>  <input type="checkbox"></td>
+          <td>Column content</td>
+          <td>Column content</td>
+          <td>Column content</td>
+            <td>Column content</td>
+
+        </tr>
+
+
+    </tbody><tbody>
+        <tr class="active">
+          <td>  <input type="checkbox"></td>
+          <td>Column content</td>
+          <td>Column content</td>
+          <td>Column content</td>
+            <td>Column content</td>
+
+        </tr>
+      </tbody>
+    </table>
+
+<div class="form-group">
+   <label for="exampleInputEmail1" >Location</label>
+<select class="form-control" id="location" onchange="loadXMLCommonDeviceTag()" >
+</select>
+   
+</div>
+<div class="form-group">
+   <label for="exampleInputEmail1"  >Common device Tag</label>
+   <select class="form-control" id="commDeviceTags" >
+</select>
+</div><div class="form-group">
+    <label for="exampleInputPassword1">Max Value</label>
+    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Enter Max">
+
+</div><div class="form-group">
+    <label for="exampleInputEmail1">Min Value</label>
+    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter Min">
+  </div>
+<div class="form-group">
+   <label for="exampleInputEmail1">Unit Name</label>
+<select class="form-control" id="measurementUnits">
+</select>
+</div>
+<div class="form-group">
+   <label for="exampleInputEmail1">Sensor ID</label>
+<select class="form-control">
+  <option>1</option>
+  <option>2</option>
+  <option>3</option>
+  <option>4</option>
+  <option>5</option>
+</select>
+</div>
+  <button type="submit" class="btn btn-default">Submit</button>
+</form>
+
+       
+      </div>
+    </div> <!-- /container -->
+
+
+
+</body></html>

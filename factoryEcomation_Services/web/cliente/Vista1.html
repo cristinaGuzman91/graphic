@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<!-- saved from url=(0085)file:///home/ccastillo/NetBeansProjects/factoryEcomation_Services/cliente/Vista1.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+	<script type="text/javascript" src="plugins/jquery.min.js"></script> 
+		<script src="plugins/highcharts.js"></script>     
+		<script type="text/javascript" src="js/sensores.js" charset="utf-8"></script>                                                        
+		<script type="text/javascript" src="js/point.js" charset="utf-8"></script>                 
+		<script type="text/javascript" src="js/request.js" charset="utf-8"></script> 
+		<script type="text/javascript" src="js/cargaForma.js" charset="utf-8"></script>  
+		<script type="text/javascript" src="js/altasBajasCambios.js"></script>
+                <script type="text/javascript" src="js/abc.js"></script>
+		<script src="js/Cargar.js"></script>  
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+	    <link href="css/forms.css" rel="stylesheet">
+    </head>
+
+    <body>
+
+    <div class="container">
+
+            <form role="form">
+  				<div class="form-group">
+    				<label>SensorTag</label>
+    				<input class="form-control" placeholder="Enter Name">
+  				</div>
+	                        <div class="form-group">
+   					<label>Sensor ID</label>
+
+					<select class="form-control" id="sensorList"></select>
+				</div>
+  				<div class="form-group">
+   					<label>Company</label>
+					<select class="form-control" id="company">
+					</select>
+				</div>
+
+				<div class="form-group" id="div_sensorType" style="display: block;">
+                                    <label id="">Sensor Type</label>
+
+                                     <select class="form-control" id="sensorType"></select>
+
+				</div>
+
+
+    <div class="form-group" id="div_Catalog">
+     <p>Catalog</p> 
+		  <div class="row" id="titulos">
+		      <div class="col-md-2">checkbox</div>
+		      <div class="col-md-2">model</div>
+		      <div class="col-md-2">reference</div>
+		      <div class="col-md-2">output format</div>
+		      <div class="col-md-2">output Type</div>      
+	           </div>
+                   <div id="datos" class="row">
+                   </div>            
+       </div>
+  
+   <div class="form-group">
+   	<label>Location</label>
+	      <select class="form-control" id="location"></select>
+   
+				</div>
+				<div class="form-group" id="div_commDeviceTags" style="display: block;">
+   					<label>Common device Tag</label>
+   					<select class="form-control" id="commDeviceTags"></select>
+				</div>
+				<div class="form-group">
+    				<label>Max Value</label>
+    				<input type="number" class="form-control" placeholder="Enter Max" id="max">
+				</div>
+				<div class="form-group">
+    				<label>Min Value</label>
+    				<input type="number" class="form-control" placeholder="Enter Min" id="min">
+  				</div>
+
+				<div class="form-group">
+   					<label>Unit Name</label>
+					<select class="form-control" id="measurementUnits"></select>
+				</div>
+
+			</form>
+
+       
+      	</div>
+
+
+
+  
+
+
+</body></html>

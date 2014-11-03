@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html >
+	<head>
+		<script type="text/javascript" src="plugins/jquery.min.js"></script>
+		<script src="plugins/highcharts.js"></script>
+		<script type="text/javascript" src="plugins/bootstrap.min.js" charset="utf-8"></script>
+		<script type="text/javascript" src="js/sensores.js" charset="utf-8"></script>
+		<script type="text/javascript" src="js/point.js" charset="utf-8"></script>
+		<script type="text/javascript" src="js/request.js" charset="utf-8"></script>
+		<script type="text/javascript" src="js/cargaForma.js" charset="utf-8"></script>
+		<script type="text/javascript" src="js/altasBajasCambios.js"></script>
+             
+		<script src="js/Cargar.js"></script>
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+	    <link href="css/forms.css" rel="stylesheet">
+	</head>
+	<body id="body" >
+        <!--<input type="number" class="form-control" id="timer" placeholder="Enter Number"> -->
+        <div id="logos" align="center">
+            <img src="Factory_Ecomation_Logo.png" alt="Factory Ecomation" height="100" style="margin: 1em 1.5em 1em 1.5em;" />
+            <img src="Seventh_Framework_Programme_Logo.png" alt="Seventh Framework Programme" height="100" style="margin: 1em 1.5em 1em 1.5em;" />
+            <img src="European_Commission_Logo.png" alt="European Commission" height="100" style="margin: 1em 1.5em 1em 1.5em;" />   
+        </div>
+
+		<div id='container' style="margin-left: 2em; margin-right: 2em;"></div>    
+		<div id="btn-container" align="center">
+			<button type="button" class="btn btn-primary  " id = "btn-form-create" style = "display">Create sensor</button>
+			<button type="button" class="btn btn-primary  " id = "btn-form-modify" style = "display:none;">Modify sensor</button>
+			<button type="button" class="btn btn-danger  " id = "btn-form-delete-decision" style = "display:none;">Delete sensor</button>			
+		</div>
+		<!-- es la pantalla que aparece cuando se desea borrar un sensor -->
+		<div class="modal fade" id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="modaldelete" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="modaldelete">Confirm sensor deletion?</h4>
+					</div>
+					<div class="modal-body">
+						<div id="delete-msg">
+
+						</div>
+					</div>
+					<div class="modal-footer">
+					   <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					   <button type="button" class="btn btn-primary" id="btn-delete-sensor" data-dismiss="modal">Delete</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal fade" id="form-modal" tabindex="-1" role="dialog" aria-labelledby="modalform" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="modalform">Create sensor?</h4>
+					</div>
+					<div class="modal-body">
+						<div id="form"></div>
+					</div>
+					<div class="modal-footer">
+					   <!--<button type="button" class="btn btn-default" id="submit" >submit</button>-->
+                                            <button type="button" class="btn-form-create" id="submit" >submit</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	
+    	<script type="text/javascript" charset="utf-8">
+    /*
+    	falta hacer un refactor de cambiar todo el codigo en ingles y checar que el sensor pueda pedir los puntos por id y desde el mapa, consultarlo con el equipo
+	*/          
+	
+	var sensoresJson = requestSensores();  
+	
+	var sensor;
+	var allSeries = [];
+	var chart; //variable chart para que se actualize en tiempo real
+	var shift;//la variable que se encarga si se tiene que mover la grafica
+	var idSeriesMap = {  }; //para saber que sensor corresponde a que posision del arreglo
+	var sensorsPointsMap = { null:{}};
+	var j = 0;
+	var displayedSensors = []; //actualemente no se encuentran sensores seleccionados
+	var actualTypeSensor = null; //es el tipo de sensor actualmente
+	var pos = -1;
+	var create = false;
+	var sensorDiscovereds = [];
+	var sensorIdSelected = null;
+    var timer = 5000;
+    var titleFontSize = '20px';
+    var legendFontSize = '16px';
+    var axisFontSize = '15px';
+	var slId = null;
+
+    //para que no cambie el tiempo con la zona horaria
+    Highcharts.setOptions({
+        global : {
+            useUTC : false
+        }
+    });
+
+	//se agregan la forma y se oculta para que no e vea pero este disponible para el toggle
+    $("#form").append(forma);
+
+
+	for(t = sensoresJson.length; j < t; j++) {
+		allSeries.push((creaSensor(sensoresJson[j],j)).getDataStructureGraph());
+	}
+	chart = new Highcharts.Chart({
+		chart :{
+			renderTo :"container",
+			defaultSeriesType: 'line',
+			},
+		title :{
+			text : "Sensors' graph",
+                        style : {
+                            fontSize: titleFontSize
+                        }
+		},
+                credits : {
+                  enabled : false  
+                },
+                legend: {
+                    itemStyle: {
+                        fontSize: legendFontSize
+                    }
+                },
+		xAxis :{
+			type : "datetime",
+			tickPixelInterval: 150,
+			maxZoom: 20 * 1000,
+                        labels: {
+                            style: {
+                                fontSize: axisFontSize,
+                                	fontWeight: 'bold',
+                                	color: '#000',
+                            },
+                            y: 20
+                        }
+		},
+		yAxis : {
+			minPadding : 0.2,
+			maxPadding : 0.2,
+			gridLineWidth: 2,
+			gridLineColor: '#000',
+			title : {
+				text : "",
+				margin : 80,
+                                style: {
+                                    fontSize: titleFontSize
+                                }
+			},
+                        labels: {
+                            style: {
+                                fontSize: axisFontSize,
+                                	fontWeight: 'bold',
+                                	color: '#000',
+                            }
+                        }
+		},
+		series : allSeries,
+                colors: ['#1560b2', '#991100', '#257800', '#8319b2', '#a83900', '#8c008c'],
+       
+        plotOptions : {
+			series : {
+                                lineWidth: 3,
+				events: {
+                                        hover: {
+                                            lineWidth: 6,
+                                        },
+					show :function(e){//se detecta cuando una serie es seleccionada
+						selectSerie(e["target"]);
+						//console.log(e);
+					},
+					hide:function  (e) {
+						deSelectSerie(e["target"]);
+					}
+				},
+			},
+		},
+	});
+
+    function selectSerie(serie){
+		//console.log(serie);
+		if (serie.options.id.type === actualTypeSensor) {
+			$("#btn-form-modify").show();
+			$("#btn-form-delete-decision").show();
+
+			displayedSensors.push(serie);//se guarda el sensor en la lista de sensores desplegados
+			$("#btn-form-modify").show();
+			$("#btn-form-delete-decision").show();
+
+			displayedSensors.push(serie);//se guarda el sensor en la lista de sensores desplegados
+
+		}else{
+			$("#btn-form-modify").show();
+			$("#btn-form-delete-decision").show();
+			hideAllSensors();
+			//displayedSensors = [];//se borran los sensores acumulados
+			actualTypeSensor = serie.options.id.type;//se cambia el sensor que se va a desplegar
+			displayedSensors.push(serie);//se guarda el sensor en la lista de sensores desplegados
+			if (serie.options.id.type) {
+				//chart.yAxis[0].setTitle({text : "ppm"});
+				chart.yAxis[0].setTitle({text : serie.options.id.type});
+			}else{
+				chart.yAxis[0].setTitle({text : ""});
+			}
+		}
+		if (serie.options.id.tag === null ){
+			$("#btn-form-modify").hide();
+			$("#btn-form-delete-decision").hide();
+			 displayForm(serie);
+			$("#form-modal").modal("show");
+			create = true;
+		}
+	}
+
+
+	//funcion que despliega la forma de crear
+	$("#btn-form-create").click(function() {
+		create = true;                   
+		$("#form-modal").modal("show");  
+	});
+
+	//funcion que despliega la forma de cambiar
+	$("#btn-form-modify").click(function () {
+            
+		if (displayedSensors.length === 1 && displayedSensors[0].options.id !== null){
+			create = false;   
+		   	displayForm (displayedSensors[0]);//el unico sensor que esta en la lista
+			$("#form-modal").modal("show");
+		}
+	});
+	//funcion que despliega la forma de cambiar
+	$("#btn-form-delete-decision").click(function () {
+		if (displayedSensors.length === 1) {
+			$("#delete-msg").text(displayedSensors[0].name + " will be deleted");
+			$('#delete-modal').modal("show");
+		}
+	});
+
+	$("#btn-delete-sensor").click(function() {
+		deleteSensor(displayedSensors[0]);
+	});
+
+	function deSelectSerie (serie) {
+		if (serie.options.id.type === null) {
+			displayForm(null);
+		}
+		pos = displayedSensors.indexOf(serie);
+		if (pos > -1) {
+			displayedSensors.splice(pos,1)[0];
+			pos = -1;
+		}
+	}
+	function hideAllSensors () {
+		for (var i = displayedSensors.length - 1; i >= 0; i--){
+			displayedSensors.pop().hide();
+		}
+		chart.redraw();
+	}
+
+
+//esta funcion tiene que llenar los puntos
+function graphPoints(newPoints) {    
+          for (var i = 0; i < newPoints.length; i++) { 
+                if (idSeriesMap[newPoints[i]["slId"]] !== null) {
+                               pushPoints (newPoints[i]);   
+      /*console.log("GRAPH POINTS == " + "value ==" + newPoints["slActualValue"]+ "fecha == " + newPoints["slActualTimestamp"]
+						+ "ID == " + newPoints["slId"]);*/
+			}else{
+				addSeries(newPoints[i]);
+			}
+		}
+		chart.redraw();
+	}
+
+function pushPoints (newPoint) {
+	//implementacion nueva
+	shift = chart.series[idSeriesMap[newPoint["slId"]]].data.length > 58;
+	//agrega los puntos a la grafica
+	chart.series[idSeriesMap[newPoint["slId"]]]
+                .addPoint({ x : newPoint["slActualTimestamp"], y : newPoint["slActualValue"]},true,shift,true);
+  
+ /*console.log("PUSH POINTS == " + "value ==" + newPoint["slActualValue"]+ "fecha == " + newPoint["slActualTimestamp"]
+						+ "ID == " + newPoint["slId"]);*/
+		//console.log("shif == " + chart.series);
+    }
+
+
+//Add-SERIES
+function addSeries (serie) {
+	chart.addSeries((creaSensor(serie,j)).getDataStructureGraph());
+	j++;
+   }
+
+//Crea-SENSOR
+function creaSensor (sensorJson,posArreglo){
+	 sensor =new Sensores();
+         sensor.setTag(sensorJson["sensor_tag"]);
+         sensor.setType(sensorJson["sensor_type"],sensorJson["slId"],sensorJson["sensor_tag"]);
+         //sensor.setType(sensorJson["unit_name"],sensorJson["slId"],sensorJson["sensor_tag"]);
+            if (sensorJson["sensor_tag"]) {
+                //Modificado
+		  sensor.setSensorName(sensorJson["sensor_tag"]);//slId tiene el ultimo punto de la tabla sensorlist
+		}else{
+                    sensor.setSensorName("slId "+sensorJson["slId"]);//slId tiene el ultimo punto de la tabla sensorlist
+		}             
+		idSeriesMap[sensorJson["slId"]] = posArreglo;
+                sensor.addPoint(sensorJson["slActualValue"]
+						,sensorJson["slActualTimestamp"]
+						,sensorJson["slId"]
+						,sensorJson["sensor_type"]);
+                                                
+   /* console.log("value ==" + sensorJson["slActualValue"]+ "fecha == "+ sensorJson["slActualTimestamp"]
+						+ "ID == " + sensorJson["slId"]
+						+ "type ==" + sensorJson["sensor_type"]);*/
+		
+	return sensor;
+}
+                                                
+   
+        
+    
+ //Checar aqui la graficación
+function redraw (sensorTag,sensorId,create,type,slId){   
+	if (!create) {       //[0,1,2,3,4]       4
+	//es update      {1:0,5:1,3:2,4:3,6:4} hacer el cambio por medio de slId no posicion del arreglo 
+	console.log(slId,slId);
+            if(sensorId !== slId){
+                    if(idSeriesMap[sensorId]){ 
+			sortArrPositions = [];
+			aux = idSeriesMap[sensorId];
+			idSeriesMap[sensorId] = idSeriesMap[slId];
+			delete idSeriesMap[slId];            
+			updateSeriesidSeriesMap(sortArrPositions,aux); 
+			update(idSeriesMap[sensorId],type,slId,sensorId); 
+			chart.series[aux].remove(true); 
+				}
+			}else{
+				update(idSeriesMap[sensorId],type,sensorId,sensorTag); 
+			}                     
+		}else{
+			update(idSeriesMap[sensorId],type,sensorId,sensorTag); 
+		}
+		chart.redraw();
+	}
+
+
+/*function redraw (sensorTag,sensorId,create,type,slId){   
+		if (!create) {       //[0,1,2,3,4]       4
+			//es update      {1:0,5:1,3:2,4:3,6:4} hacer el cambio por medio de slId no posicion del arreglo 
+			console.log(sensorId,slId);
+			if(sensorId !== slId){
+				if(idSeriesMap[sensorId]){ 
+					sortArrPositions = [];
+					aux = idSeriesMap[sensorId];
+					idSeriesMap[sensorId] = idSeriesMap[slId];
+					delete idSeriesMap[slId];            
+					updateSeriesidSeriesMap(sortArrPositions,aux); 
+					update(idSeriesMap[sensorId],type,sensorId,sensorTag); 
+					chart.series[aux].remove(true); 
+				}
+			}else{
+				update(idSeriesMap[sensorId],type,sensorId,sensorTag); 
+			}                     
+		}else{
+			update(idSeriesMap[sensorId],type,sensorId,sensorTag); 
+		}
+		chart.redraw();
+	}*/
+function redrawDeleteSensorOrNoSlId (slId) {
+		console.log("en no",slId);  
+		sortArrPositions = []; 
+		aux = idSeriesMap[slId];
+		console.log(aux,idSeriesMap);
+		delete idSeriesMap[slId]; 
+                updateSeriesidSeriesMap(sortArrPositions,aux);  
+		chart.series[aux].remove(true);
+	}
+
+	function update (i,type,slId,sensorTag) {      
+		chart.series[i].update({name : sensorTag },false); 
+		chart.series[i].options.id = {"type":type,"slId":slId,"tag":sensorTag};   
+		chart.series[i].setData([]);
+		chart.yAxis[0].setTitle({text:type});
+		
+	}  
+	
+	function updateSeriesidSeriesMap (sortArr,aux) {
+		 for (var i in idSeriesMap) {
+			sortArr.push([i,idSeriesMap[i]]);
+                        console.log("updateSeriesidSeriesMap" + idSeriesMap[i]);
+		 };  
+		 sortArr.sort(function(a,b) {
+			return a[1] - b[1];
+		 });                      
+		 //remover la pos aux del arreglo de series de chart
+		 for (var i=0; i < sortArr.length; i++) {
+			 sortArr[i][1] = i;
+		 };                                          
+		 for (var i=0; i < sortArr.length; i++) { 
+			 idSeriesMap[sortArr[i][0]] = i;      
+			j = i;
+		 };	
+		j = sortArr.length;   
+		
+	}     
+    $('#timer').keyup(function(){
+        timer = $('#timer').val();
+        console.log("timer de consulta" + timer);
+    });
+
+
+
+
+
+	/*setInterval(function(){
+            requestSensores();
+            console.log("timer" + timer);
+        },timer);*/
+
+	</script>
+</html>

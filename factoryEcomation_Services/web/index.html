@@ -1,0 +1,40 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body>
+        
+        <p id="demo"></p>
+
+<script>
+var myVar=setInterval(function(){myTimer()},3000);
+
+function myFunction()
+{
+setInterval(myTimer,3000);
+}
+
+function myTimer()
+{
+var date=new Date();
+var temp = Math.floor((Math.random()*60)+1);
+var dia = Math.floor((Math.random()*28)+1);
+var mes = Math.floor((Math.random()*12)+1);
+date.setMonth(mes);
+date.setDate(dia);
+var t=date.toDateString();
+document.getElementById("demo").innerHTML=t;
+
+}
+
+
+</script>
+        <div>TODO write content</div>
+    </body>
+</html>
